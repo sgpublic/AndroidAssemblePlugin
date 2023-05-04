@@ -1,8 +1,14 @@
 package io.github.sgpublic.gradle.util
 
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import io.github.sgpublic.gradle.AndroidAssemblePlugin
 import io.github.sgpublic.gradle.core.BuildTypes
 import net.dongliu.apk.parser.ApkFile
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
 import java.io.File
 import java.io.InputStream
@@ -10,7 +16,37 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-object ApkUtil {
+
+internal fun Project.applyAssemble() {
+    when (val android = project.extensions.getByName("android")) {
+        is AppExtension -> android.applicationVariants.all {
+            applyAssembleIntern(project)
+        }
+        is LibraryExtension -> android.libraryVariants.all {
+            applyAssembleIntern(project)
+        }
+    }
+}
+
+private fun BaseVariant.applyAssembleIntern(project: Project) {
+    for (output in outputs) {
+        if (output !is BaseVariantOutputImpl) {
+            continue
+        }
+        val name = output.name.split("-")
+            .joinToString("") { it.capitalize() }
+        project.tasks.register("assemble${name}AndLocate") {
+            dependsOn("assemble${name}")
+            doLast {
+
+            }
+        }
+    }
+}
+
+
+
+internal object _Assemble {
     fun assembleApkAndLocate(name: String, outputFile: File, targetPath: String) {
         if (!outputFile.exists() || outputFile.extension != "apk") {
             return
