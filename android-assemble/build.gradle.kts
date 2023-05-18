@@ -1,4 +1,4 @@
-import io.github.sgpublic.gradle.gradlePluginPublish
+import io.github.sgpublic.androidassemble.gradlePluginPublish
 
 plugins {
     kotlin("jvm")
@@ -15,7 +15,7 @@ dependencies {
 }
 
 gradlePluginPublish("android-assemble") {
-    implementationClass = "io.github.sgpublic.gradle.AndroidAssemblePlugin"
+    implementationClass = "io.github.sgpublic.androidassemble.AndroidAssemblePlugin"
     displayName = "Plugin for apk and aar packaging"
     description = "A plugin that provides extension capabilities for apk and aar packaging"
     tags.set(listOf("android"))

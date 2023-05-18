@@ -1,4 +1,4 @@
-package io.github.sgpublic.gradle.core
+package io.github.sgpublic.androidassemble.core
 
 import java.math.BigInteger
 import java.security.MessageDigest

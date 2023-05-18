@@ -1,4 +1,4 @@
-package io.github.sgpublic.gradle.util
+package io.github.sgpublic.androidassemble.util
 
 import com.android.build.api.dsl.VariantDimension
 

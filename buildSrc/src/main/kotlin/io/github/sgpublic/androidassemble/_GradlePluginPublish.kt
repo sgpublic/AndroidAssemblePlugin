@@ -1,4 +1,4 @@
-package io.github.sgpublic.gradle
+package io.github.sgpublic.androidassemble
 
 import org.gradle.api.Project
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
