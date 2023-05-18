@@ -1,6 +1,6 @@
 package io.github.sgpublic.androidassemble
 
-import io.github.sgpublic.androidassemble.util.applyAssemble
+import io.github.sgpublic.androidassemble.core.applyAssemble
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger

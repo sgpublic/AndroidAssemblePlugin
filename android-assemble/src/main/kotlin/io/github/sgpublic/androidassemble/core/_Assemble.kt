@@ -1,18 +1,11 @@
-package io.github.sgpublic.androidassemble.util
+package io.github.sgpublic.androidassemble.core
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApkVariantImpl
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import com.android.build.gradle.internal.api.LibraryVariantImpl
 import io.github.sgpublic.androidassemble.AndroidAssemblePlugin
-import io.github.sgpublic.androidassemble.core.DefaultAssembleOption
-import io.github.sgpublic.androidassemble.core.RenameParam
-import io.github.sgpublic.androidassemble.core.assembleOption
-import io.github.sgpublic.androidassemble.core.renameRule
 import org.gradle.api.Project
-import org.gradle.api.logging.LogLevel
 import org.gradle.internal.os.OperatingSystem
 import java.io.File
 import java.io.InputStream
