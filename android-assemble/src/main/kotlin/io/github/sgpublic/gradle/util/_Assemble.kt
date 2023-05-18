@@ -3,8 +3,11 @@ package io.github.sgpublic.gradle.util
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.internal.api.ApkVariantImpl
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import com.android.build.gradle.internal.api.LibraryVariantImpl
 import io.github.sgpublic.gradle.core.DefaultAssembleOption
+import io.github.sgpublic.gradle.core.RenameParam
 import io.github.sgpublic.gradle.core.assembleOption
 import io.github.sgpublic.gradle.core.renameRule
 import org.gradle.api.Project
@@ -48,7 +51,12 @@ private fun Project.doLastAssemble(variant: BaseVariant, output: BaseVariantOutp
         (assembleOption[this] ?: DefaultAssembleOption).getOutputDir(variant),
         variant.flavorName
     )
-    val outputName = variant.buildType.renameRule.invoke(variant)
+    val outputName = variant.buildType.renameRule.invoke(RenameParam(
+        flavorType = variant.flavorName,
+        buildType = variant.buildType.name,
+        versionName = variant.mergedFlavor.versionName ?: "",
+        versionCode = variant.mergedFlavor.versionCode ?: 1,
+    ))
 
     val copy = File(assemble, outputName)
     output.outputFile.copy(copy)
@@ -57,6 +65,7 @@ private fun Project.doLastAssemble(variant: BaseVariant, output: BaseVariantOutp
     val runtime = Runtime.getRuntime()
     when {
         current.isWindows -> runtime.exec("explorer.exe /select, $copy")
+        current.isMacOsX -> runtime.exec("open -R $copy")
     }
 }
 

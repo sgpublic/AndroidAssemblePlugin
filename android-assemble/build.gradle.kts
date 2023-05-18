@@ -9,9 +9,6 @@ plugins {
 }
 
 dependencies {
-    /* https://mvnrepository.com/artifact/net.dongliu/apk-parser */
-    implementation("net.dongliu:apk-parser:2.6.10")
-
     val agp = "4.2.0"
     implementation("com.android.application:com.android.application.gradle.plugin:$agp")
     implementation("com.android.library:com.android.library.gradle.plugin:$agp")

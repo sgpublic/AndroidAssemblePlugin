@@ -1,10 +1,7 @@
 package io.github.sgpublic.gradle.core
 
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApkVariantImpl
-import com.android.build.gradle.internal.api.ApkVariantOutputImpl
-import com.android.build.gradle.internal.api.LibraryVariantImpl
-import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
+import com.android.build.gradle.internal.api.*
 import io.github.sgpublic.gradle.AndroidAssemblePlugin
 import org.gradle.api.Project
 import java.io.File
@@ -42,15 +39,14 @@ fun Project.assembleOption(block: (AssembleOption) -> Unit) {
 }
 
 data class RenameParam(
-    val projectName: String,
     val flavorType: String,
     val buildType: String,
-    val versionName: String,
+    val versionName: String = "",
     val versionCode: Int = 1,
 )
 
 
-typealias BaseRenameRule = BaseVariant.() -> String
+typealias BaseRenameRule = (RenameParam).() -> String
 
 private val renameRules = hashMapOf<String, BaseRenameRule>()
 fun com.android.build.api.dsl.BuildType.renameRule(block: BaseRenameRule) {
