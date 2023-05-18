@@ -1,11 +1,9 @@
 package io.github.sgpublic.gradle.core
 
-import com.android.build.api.dsl.ApplicationBuildType
-import com.android.build.api.dsl.BuildType
-import com.android.build.api.dsl.LibraryBuildType
-import com.android.build.gradle.TestedExtension
 import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.internal.api.ApkVariantImpl
 import com.android.build.gradle.internal.api.ApkVariantOutputImpl
+import com.android.build.gradle.internal.api.LibraryVariantImpl
 import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
 import io.github.sgpublic.gradle.AndroidAssemblePlugin
 import org.gradle.api.Project
@@ -24,7 +22,7 @@ interface AssembleOption {
     }
 }
 
-internal class AssembleOptionImpl: AssembleOption {
+internal open class AssembleOptionImpl: AssembleOption {
     private var _apkOutputDir: File = AndroidAssemblePlugin.rootProject.file("./build/assemble/apk")
     override var apkOutputDir: File
         get() = _apkOutputDir
@@ -36,33 +34,26 @@ internal class AssembleOptionImpl: AssembleOption {
         set(value) { _aarOutputDir = value }
 }
 
+internal object DefaultAssembleOption: AssembleOptionImpl()
+
 internal val assembleOption = hashMapOf<Project, AssembleOption>()
 fun Project.assembleOption(block: (AssembleOption) -> Unit) {
     assembleOption[this] = AssembleOptionImpl().also(block)
 }
 
-data class AppRenameParam(
+data class RenameParam(
     val projectName: String,
     val flavorType: String,
     val buildType: String,
     val versionName: String,
-    val versionCode: Int,
+    val versionCode: Int = 1,
 )
-typealias AppRenameRule = AppRenameParam.() -> String
-private val appRenameRule = hashMapOf<ApplicationBuildType, AppRenameRule>()
-fun ApplicationBuildType.renameRule(block: AppRenameRule) {
-    appRenameRule[this] = block
-}
 
-data class LibRenameParam(
-    val projectName: String,
-    val flavorType: String,
-    val buildType: String,
-    val versionName: String,
-)
-typealias LibRenameRule = LibRenameParam.() -> String
-private val libRenameRule = hashMapOf<LibraryBuildType, LibRenameRule>()
-fun LibraryBuildType.renameRule(block: LibRenameRule) {
-    libRenameRule[this] = block
+
+typealias BaseRenameRule = BaseVariant.() -> String
+
+private val renameRules = hashMapOf<String, BaseRenameRule>()
+fun com.android.build.api.dsl.BuildType.renameRule(block: BaseRenameRule) {
+    renameRules[name] = block
 }
-val LibraryBuildType.renameRule: LibRenameRule = 
+val com.android.builder.model.BuildType.renameRule: BaseRenameRule get() = renameRules[name]!!

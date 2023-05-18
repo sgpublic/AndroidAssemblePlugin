@@ -3,21 +3,15 @@ package io.github.sgpublic.gradle.util
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
-import io.github.sgpublic.gradle.AndroidAssemblePlugin
-import io.github.sgpublic.gradle.core.AssembleOptionImpl
-import io.github.sgpublic.gradle.core.BuildTypes
+import io.github.sgpublic.gradle.core.DefaultAssembleOption
 import io.github.sgpublic.gradle.core.assembleOption
+import io.github.sgpublic.gradle.core.renameRule
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
-import java.text.SimpleDateFormat
-import java.util.*
-
 
 internal fun Project.applyAssemble() {
     when (val android = project.extensions.getByName("android")) {
@@ -46,33 +40,15 @@ private fun BaseVariant.applyAssembleIntern(project: Project) {
     }
 }
 
-private val CurrentDate get() = SimpleDateFormat("yyMMdd-HHmm").format(Date())
 private fun Project.doLastAssemble(variant: BaseVariant, output: BaseVariantOutputImpl) {
     if (!output.outputFile.exists()) {
         return
     }
     val assemble = File(
-        assembleOption[this]?.getOutputDir(variant) ?: return,
+        (assembleOption[this] ?: DefaultAssembleOption).getOutputDir(variant),
         variant.flavorName
     )
-    val name = variant.buildType.name
-    val outputName = AndroidAssemblePlugin.rootProject.name + when (variant) {
-        is ApkVariantOutputImpl -> {
-            if (name.contains(BuildTypes.TYPE_RELEASE)) {
-                " V${variant.versionNameOverride}(${variant.versionCode})"
-            } else if (name.contains(BuildTypes.TYPE_BETA)) {
-                "_${variant.versionNameOverride}"
-            } else if (name.contains(BuildTypes.TYPE_ALPHA)) {
-                "_${variant.versionNameOverride}"
-            } else {
-                return
-            }
-        }
-        is LibraryVariantOutputImpl -> {
-            "$name-${CurrentDate}.${output.outputFile.extension}"
-        }
-        else -> return
-    }
+    val outputName = variant.buildType.renameRule.invoke(variant)
 
     val copy = File(assemble, outputName)
     output.outputFile.copy(copy)
