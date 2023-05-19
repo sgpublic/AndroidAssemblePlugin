@@ -3,6 +3,7 @@ package io.github.sgpublic.androidassemble.core
 import io.github.sgpublic.androidassemble.AndroidAssemblePlugin
 import org.gradle.api.Project
 import java.io.File
+import java.io.Serializable
 
 interface AssembleOption {
     var outputDir: Any
@@ -44,4 +45,10 @@ private val renameRules = hashMapOf<String, BaseRenameRule>()
 fun com.android.build.api.dsl.BuildType.renameRule(block: BaseRenameRule) {
     renameRules[name] = block
 }
-val com.android.builder.model.BuildType.renameRule: BaseRenameRule? get() = renameRules[name]
+val com.android.builder.model.BuildType.renameRule: BaseRenameRule get() =
+    renameRules[name] ?: {
+        when (flavorType) {
+            "release" -> " V${versionName}(${versionCode})"
+            else -> "_${versionName}_${versionCode}"
+        }
+    }

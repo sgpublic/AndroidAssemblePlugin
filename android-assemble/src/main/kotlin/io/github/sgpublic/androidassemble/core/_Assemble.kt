@@ -1,15 +1,20 @@
 package io.github.sgpublic.androidassemble.core
 
+import com.android.build.api.variant.BuildConfigField
+import com.android.build.api.variant.impl.ApplicationVariantImpl
+import com.android.build.api.variant.impl.LibraryVariantImpl
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import com.android.build.gradle.api.BaseVariantOutput
 import io.github.sgpublic.androidassemble.AndroidAssemblePlugin
 import org.gradle.api.Project
+import org.gradle.api.provider.MapProperty
 import org.gradle.internal.os.OperatingSystem
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.Serializable
 
 internal fun Project.applyAssemble() {
     when (val android = project.extensions.getByName("android")) {
@@ -24,9 +29,6 @@ internal fun Project.applyAssemble() {
 
 private fun BaseVariant.applyAssembleIntern(project: Project) {
     for (output in outputs) {
-        if (output !is BaseVariantOutputImpl) {
-            continue
-        }
         val name = output.name.split("-")
             .joinToString("") { it.capitalize() }
         project.tasks.register("assemble${name}AndLocate") {
@@ -38,7 +40,7 @@ private fun BaseVariant.applyAssembleIntern(project: Project) {
     }
 }
 
-private fun Project.doLastAssemble(variant: BaseVariant, output: BaseVariantOutputImpl) {
+private fun Project.doLastAssemble(variant: BaseVariant, output: BaseVariantOutput) {
     if (!output.outputFile.exists()) {
         return
     }
@@ -46,18 +48,23 @@ private fun Project.doLastAssemble(variant: BaseVariant, output: BaseVariantOutp
         (assembleOption[this] ?: DefaultAssembleOption).getOutputDir(),
         variant.flavorName
     )
-    val outputName = (variant.buildType.renameRule?.invoke(
-        RenameParam(
-        flavorType = variant.flavorName,
-        buildType = variant.buildType.name,
-        versionName = variant.mergedFlavor.versionName ?: "",
-        versionCode = variant.mergedFlavor.versionCode ?: 1,
-    )
-    ) ?: (AndroidAssemblePlugin.RootProject.name + "-" + AndroidAssemblePlugin.Project.name + when (variant.buildType.name) {
-        "release" -> " V${variant.mergedFlavor.versionName ?: return}(${variant.mergedFlavor.versionCode ?: return})"
-        "debug" -> "_${variant.mergedFlavor.versionName ?: return}_${variant.mergedFlavor.versionCode ?: return}"
-        else -> return
-    })) + ".${output.outputFile.extension}"
+    val outputName = variant.buildType.renameRule.invoke(
+        when (variant) {
+            is ApplicationVariantImpl -> RenameParam(
+                flavorType = variant.getFlavorName(),
+                buildType = variant.getBuildType().name,
+                versionName = variant.buildConfigFields["VERSION_NAME"]!!.toString(),
+                versionCode = variant.buildConfigFields["VERSION_CODE"]!!.toString().toInt(),
+            )
+            is LibraryVariantImpl -> RenameParam(
+                flavorType = variant.getFlavorName(),
+                buildType = variant.getBuildType().name,
+                versionName = variant.buildConfigFields["VERSION_NAME"]?.toString() ?: "undefined",
+                versionCode = variant.buildConfigFields["VERSION_CODE"]?.toString()?.toInt() ?: -1,
+            )
+            else -> return
+        }
+    ) + ".${output.outputFile.extension}"
 
     val copy = File(assemble, outputName)
     output.outputFile.copy(copy)
@@ -104,3 +111,6 @@ private fun InputStream.copy(target: OutputStream): Long {
     target.close()
     return bytesCopied
 }
+
+operator fun MapProperty<String, BuildConfigField<out Serializable>>.get(key: String) =
+    getting(key).orNull?.value

@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-    val agp = "4.2.0"
+    val agp = "7.0.0"
     implementation("com.android.application:com.android.application.gradle.plugin:$agp")
     implementation("com.android.library:com.android.library.gradle.plugin:$agp")
 }
@@ -22,12 +22,12 @@ gradlePluginPublish("android-assemble") {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }
