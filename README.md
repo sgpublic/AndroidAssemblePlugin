@@ -81,10 +81,10 @@ README.md 中的注释可能随版本更新会与实际不同，具体请参阅�
 
 ### 辅助管理版本名称
 
-单例类：
+[VersionGen.kt](./android-assemble/src/main/kotlin/io/github/sgpublic/androidassemble/util/VersionGen.kt)
 
 ```kotlin
-package io.github.sgpublic.androidassemble.core
+package io.github.sgpublic.androidassemble.util
 
 /** 辅助管理版本名称 */
 object VersionGen {
@@ -114,12 +114,26 @@ object VersionGen {
 
 ### buildConfigFiled
 
-扩展方法：
+[_VariantDimension.kt](./android-assemble/src/main/kotlin/io/github/sgpublic/androidassemble/util/_VariantDimension.kt)
 
 ```kotlin
 /**
  * 添加 buildConfigFiled，仅支持基础数据类型和 String
  */
  fun VariantDimension.buildConfigField(name: String, value: Any)
+```
+
+### libVersionCode/libVersionName
+
+[_LibDefaultConfg.kt](./android-assemble/src/main/kotlin/io/github/sgpublic/androidassemble/util/_LibDefaultConfg.kt)
+
+```kotlin
+package io.github.sgpublic.androidassemble.util
+
+/** 为 com.android.library 添加版本号，并写入 BuildConfig.VERSION_CODE */
+var DefaultConfig.libVersionCode: Int?
+
+/** 为 com.android.library 添加版本名，并写入 BuildConfig.VERSION_NAME */
+var DefaultConfig.libVersionName: String?
 ```
 
