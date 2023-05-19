@@ -17,18 +17,19 @@ interface AssembleOption {
     }
 }
 
-internal open class AssembleOptionImpl: AssembleOption {
+internal open class AssembleOptionImpl(
+    project: Project
+): AssembleOption {
     override var outputDir: Any = File(
         AndroidAssemblePlugin.RootProject.projectDir,
-        "./assemble/${AndroidAssemblePlugin.Project.name}"
+        "./assemble/${project.name}"
     )
 }
 
-internal object DefaultAssembleOption: AssembleOptionImpl()
 
 internal val assembleOption = hashMapOf<Project, AssembleOption>()
 fun Project.assembleOption(block: AssembleOption.() -> Unit) {
-    assembleOption[this] = AssembleOptionImpl().also(block)
+    assembleOption[this] = AssembleOptionImpl(this).also(block)
 }
 
 data class RenameParam(
@@ -45,10 +46,5 @@ private val renameRules = hashMapOf<String, BaseRenameRule>()
 fun com.android.build.api.dsl.BuildType.renameRule(block: BaseRenameRule) {
     renameRules[name] = block
 }
-val com.android.builder.model.BuildType.renameRule: BaseRenameRule get() =
-    renameRules[name] ?: {
-        when (flavorType) {
-            "release" -> " V${versionName}(${versionCode})"
-            else -> "_${versionName}_${versionCode}"
-        }
-    }
+val com.android.builder.model.BuildType.renameRule: BaseRenameRule?
+    get() = renameRules[name]

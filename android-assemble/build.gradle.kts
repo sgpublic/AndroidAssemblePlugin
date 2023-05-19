@@ -10,8 +10,9 @@ plugins {
 
 dependencies {
     val agp = "7.0.0"
-    implementation("com.android.application:com.android.application.gradle.plugin:$agp")
-    implementation("com.android.library:com.android.library.gradle.plugin:$agp")
+    implementation("com.android.tools.build:gradle-api:$agp")
+//    implementation("com.android.application:com.android.application.gradle.plugin:$agp")
+//    implementation("com.android.library:com.android.library.gradle.plugin:$agp")
 }
 
 gradlePluginPublish("android-assemble") {
