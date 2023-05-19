@@ -1,18 +1,21 @@
 # AndroidAssemblePlugin
 
-![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.sgpublic.android-assemble)
-
 此 Gradle 插件可以帮助您归档您的 Android Application 或 Android Library 项目打包的文件，而您只需要引用此插件而无需额外进行任何操作。
+
+## 版本
+
+| 插件版本 | 目前最新版                                                   | 支持的 AGP 版本 | 所需最低 Gradle 版本 |
+| -------- | ------------------------------------------------------------ | --------------- | -------------------- |
+| 1.x      | ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.sgpublic.android-assemble?versionPrefix=1.) | 4.2.x           | 7.6                  |
+| 2.x      | ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.sgpublic.android-assemble?versionPrefix=2.) | 7.x ~ 8.x       | 7.6                  |
 
 ## 快速开始
 
 ```kotlin
 plugins {
-    id("io.github.sgpublic.android-assemble") version "$latest"
+   id("io.github.sgpublic.android-assemble") version "$version"
 }
 ```
-
-Now you can then run the Gradle task `assembleXxxAndLocate` to package the APK or AAR. Once the packaging is complete, the plugin will move the packaged APK or AAR to the `build` folder in the root directory of your project and automatically open `explorer.exe` for you.
 
 引入插件后，插件会为您的项目额外添加 Gradle Task，具体而言，项目中已有 `assemble${productFlavor}${buildType}` 用于打包指定 ProductFlavor、BuildType 的 apk 或 aar，则插件会为您额外添加 `assemble${productFlavor}${buildType}AndLocate`，默认配置下此任务会执行以下步骤：
 
@@ -26,6 +29,10 @@ Now you can then run the Gradle task `assembleXxxAndLocate` to package the APK o
    - debug：`${rootProject.name}-${project.name}_${versionName}_${versionCode}`
 
 3. 打开文件浏览器并高亮显示打包后的文件（暂时仅支持 Windows 和 macOS）。
+
+### 针对 AAR
+
+由于 AGP v4 对 `versionName` 和 `versionName` 的定义不会体现在 BuildConfig 中，因此推荐您使用 [libVersionCode/libVersionName](#libversioncodelibversionname) 定义。
 
 ## 自定义
 
@@ -120,7 +127,7 @@ object VersionGen {
 /**
  * 添加 buildConfigFiled，仅支持基础数据类型和 String
  */
- fun VariantDimension.buildConfigField(name: String, value: Any)
+fun VariantDimension.buildConfigField(name: String, value: Any)
 ```
 
 ### libVersionCode/libVersionName
@@ -136,4 +143,3 @@ var DefaultConfig.libVersionCode: Int?
 /** 为 com.android.library 添加版本名，并写入 BuildConfig.VERSION_NAME */
 var DefaultConfig.libVersionName: String?
 ```
-
