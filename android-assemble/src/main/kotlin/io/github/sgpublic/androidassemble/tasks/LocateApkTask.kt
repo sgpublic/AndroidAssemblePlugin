@@ -20,6 +20,6 @@ internal abstract class LocateApkTask: TransformApkTask() {
     @TaskAction
     override fun action() {
         super.action()
-        target.locate()
+        target().locate()
     }
 }

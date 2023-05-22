@@ -12,16 +12,16 @@ import org.gradle.api.provider.Property
 import java.io.File
 
 internal interface TargetFileProperty {
-    val targetExtension: String
-    val target: File
+    fun targetExtension(): String
+    fun target(): File
 
     fun getProject(): Project
 
     fun VariantProperty.doTransform() {
         getProject().run {
-            target.copy(File(
+            target().copy(File(
                 assembleOption().getOutputDir(),
-                renameRule(buildType.get()).invoke(asRenameParam) + ".$targetExtension"
+                renameRule(buildType.get()).invoke(asRenameParam) + ".${targetExtension()}"
             ))
         }
     }
@@ -30,7 +30,9 @@ internal interface TargetFileProperty {
 internal interface FileArtifactProperty: TargetFileProperty {
     val fileProperty: RegularFileProperty
 
-    override val target: File get() = fileProperty.get().asFile
+    override fun target(): File {
+        return fileProperty.get().asFile
+    }
 }
 
 internal fun FileArtifactProperty.setupFileArtifactPropertyFrom(variant: ApplicationVariant) {
@@ -44,13 +46,13 @@ internal interface DirArtifactProperty: TargetFileProperty {
     val dirProperty: DirectoryProperty
     val builtArtifactsLoader: Property<BuiltArtifactsLoader>
 
-    override val target: File get() {
+    override fun target(): File {
         builtArtifactsLoader.get().load(
             dirProperty.get()
         )?.elements?.let { elements ->
             for (element in elements) {
                 return File(element.outputFile)
-                    .takeIf { it.extension == targetExtension }
+                    .takeIf { it.extension == targetExtension() }
                     ?: continue
             }
         }

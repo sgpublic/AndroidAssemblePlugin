@@ -8,7 +8,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
 internal abstract class TransformBundleTask: LocateArtifactsTask(), FileArtifactProperty {
-    final override val targetExtension: String = "aab"
+    final override fun targetExtension(): String = "aab"
 
     @get:InputFiles
     abstract override val fileProperty: RegularFileProperty

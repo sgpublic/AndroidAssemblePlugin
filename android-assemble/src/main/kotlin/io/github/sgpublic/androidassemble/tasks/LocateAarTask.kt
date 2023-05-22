@@ -12,6 +12,6 @@ internal abstract class LocateAarTask: TransformAarTask() {
     @TaskAction
     override fun action() {
         super.action()
-        target.locate()
+        target().locate()
     }
 }

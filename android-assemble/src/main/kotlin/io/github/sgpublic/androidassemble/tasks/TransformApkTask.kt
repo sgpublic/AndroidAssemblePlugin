@@ -11,7 +11,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 internal abstract class TransformApkTask: LocateArtifactsTask(), DirArtifactProperty {
-    final override val targetExtension: String = "apk"
+    final override fun targetExtension(): String = "apk"
 
     @get:InputFiles
     abstract override val dirProperty: DirectoryProperty
