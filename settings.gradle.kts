@@ -26,5 +26,3 @@ dependencyResolutionManagement {
 rootProject.name = "AndroidAssemblePlugin"
 
 include("android-assemble")
-include(":app-test")
-include(":lib-test")

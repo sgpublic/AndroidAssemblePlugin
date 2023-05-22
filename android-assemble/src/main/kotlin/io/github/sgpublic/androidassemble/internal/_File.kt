@@ -1,11 +1,9 @@
 package io.github.sgpublic.androidassemble.internal
 
-import com.android.build.api.variant.BuildConfigField
-import org.gradle.api.provider.MapProperty
+import org.gradle.internal.os.OperatingSystem
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
-import java.io.Serializable
 
 internal fun File.copy(target: File): File {
     if (!exists()) {
@@ -39,4 +37,13 @@ private fun InputStream.copy(target: OutputStream): Long {
     target.flush()
     target.close()
     return bytesCopied
+}
+
+fun File.locate() {
+    val current = OperatingSystem.current()
+    val runtime = Runtime.getRuntime()
+    when {
+        current.isWindows -> runtime.exec("explorer.exe /select, $canonicalPath")
+        current.isMacOsX -> runtime.exec("open -R $canonicalPath")
+    }
 }
