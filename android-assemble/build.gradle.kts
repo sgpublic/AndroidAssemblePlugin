@@ -9,8 +9,10 @@ plugins {
 }
 
 dependencies {
-    val agp = "7.0.0"
-    implementation("com.android.tools.build:gradle-api:$agp")
+    // https://mvnrepository.com/artifact/com.android.tools.build/gradle-api
+    implementation("com.android.tools.build:gradle-api:7.0.0")
+    // https://mvnrepository.com/artifact/io.github.sgpublic/SimplifyXMLObject
+    implementation("io.github.sgpublic:SimplifyXMLObject:1.2.2")
 }
 
 gradlePluginPublish("android-assemble") {

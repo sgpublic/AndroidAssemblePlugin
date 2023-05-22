@@ -1,5 +1,7 @@
 package io.github.sgpublic.androidassemble.core
 
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.ApplicationVariant
 import org.gradle.api.Project
 import java.io.File
 

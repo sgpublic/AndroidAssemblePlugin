@@ -1,15 +1,24 @@
 package io.github.sgpublic.androidassemble.internal
 
 import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.LibraryDefaultConfig
+import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.*
+import com.sgpublic.xml.SXMLObject
 import io.github.sgpublic.androidassemble.core.RenameParam
 import io.github.sgpublic.androidassemble.core.assembleOption
 import io.github.sgpublic.androidassemble.core.renameRule
+import io.github.sgpublic.androidassemble.util.libVersionCode
+import io.github.sgpublic.androidassemble.util.libVersionName
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import java.io.File
+import java.io.Serializable
 
 internal interface TargetFileProperty {
     fun targetExtension(): String
@@ -17,13 +26,32 @@ internal interface TargetFileProperty {
 
     fun getProject(): Project
 
-    fun VariantProperty.doTransform() {
+    fun VariantProperty.doTransform(): File {
+        if (this is ManifestProperty) {
+            SXMLObject(manifestProperty.get().asFile.readText()).let {
+                versionName.set(it.getStringAttr("android:versionName"))
+                versionCode.set(it.getIntAttr("android:versionCode"))
+            }
+        }
         getProject().run {
-            target().copy(File(
+            return target().copy(File(
                 assembleOption().getOutputDir(),
                 renameRule(buildType.get()).invoke(asRenameParam) + ".${targetExtension()}"
             ))
         }
+    }
+
+
+    fun VariantProperty.setupVariantPropertyFrom(variant: ApplicationVariant) {
+        buildType.set(variant.buildType)
+        flavorName.set(variant.flavorName)
+    }
+
+    fun VariantProperty.setupVariantPropertyFrom(variant: LibraryVariant, defaultConfig: LibraryDefaultConfig) {
+        buildType.set(variant.buildType)
+        flavorName.set(variant.flavorName)
+        versionName.set(defaultConfig.libVersionName)
+        versionCode.set(defaultConfig.libVersionCode)
     }
 }
 
@@ -93,7 +121,9 @@ internal val VariantProperty.asRenameParam: RenameParam get() {
     )
 }
 
-internal fun VariantProperty.setupVariantPropertyFrom(variant: Variant) {
-    buildType.set(variant.buildType)
-    flavorName.set(variant.flavorName)
+internal interface ManifestProperty {
+    val manifestProperty: RegularFileProperty
+}
+internal fun ManifestProperty.setupManifestPropertyFrom(variant: ApplicationVariant) {
+    manifestProperty.set(variant.artifacts.get(SingleArtifact.MERGED_MANIFEST))
 }
