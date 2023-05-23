@@ -7,7 +7,9 @@
 | 插件版本 | 目前最新版                                                   | 支持的 AGP 版本 | 所需最低 Gradle 版本 |
 | -------- | ------------------------------------------------------------ | --------------- | -------------------- |
 | 1.x      | ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.sgpublic.android-assemble?versionPrefix=1.) | 4.2.x           | 7.6                  |
-| 2.x      | ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.sgpublic.android-assemble?versionPrefix=2.) | 7.x ~ 8.x       | 7.6                  |
+| 2.x      | ![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/io.github.sgpublic.android-assemble?versionPrefix=2.) | 7.x/8.x         | 7.6/8.0 *            |
+
+\* APG 8.x 需要最低 Gradle 8.0
 
 ## 快速开始
 
