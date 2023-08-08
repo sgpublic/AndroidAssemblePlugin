@@ -16,12 +16,10 @@ import org.gradle.api.Project
 class ApplyAction internal constructor(project: Project):
     Loggable,
     Project by project {
-    private val androidComponents: AndroidComponentsExtension<*, *, *> by lazy {
-        extensions.getByType(AndroidComponentsExtension::class.java)
-    }
-
     internal fun applyAssemble() {
-        androidComponents.invoke()
+        clearAssembleOption()
+        clearRenameRules()
+        extensions.getByType(AndroidComponentsExtension::class.java).invoke()
     }
 
     private fun AndroidComponentsExtension<*, *, *>.invoke() {

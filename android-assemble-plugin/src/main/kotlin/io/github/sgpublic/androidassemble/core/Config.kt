@@ -28,6 +28,9 @@ internal open class AssembleOptionImpl(project: Project):
 
 
 private val assembleOption = hashMapOf<String, AssembleOption>()
+internal fun clearAssembleOption() {
+    assembleOption.clear()
+}
 fun Project.assembleOption(block: AssembleOption.() -> Unit) {
     assembleOption[name] = AssembleOptionImpl(this).also(block)
 }
@@ -46,6 +49,9 @@ data class RenameParam(
 typealias BaseRenameRule = (RenameParam).() -> String
 
 private val renameRules = hashMapOf<String, HashMap<String, BaseRenameRule>>()
+internal fun clearRenameRules() {
+    renameRules.clear()
+}
 internal fun Project.registerRenameRule(): HashMap<String, BaseRenameRule> {
     return hashMapOf<String, BaseRenameRule>().also {
         renameRules[name] = it
