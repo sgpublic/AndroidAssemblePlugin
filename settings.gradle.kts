@@ -5,14 +5,6 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.name == "io.github.sgpublic.android-assemble") {
-                useModule(project("io.github.sgpublic.android-assemble:${requested.version}"))
-            }
-        }
-    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -25,4 +17,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidAssemblePlugin"
 
-include("android-assemble")
+include("android-assemble-plugin")
