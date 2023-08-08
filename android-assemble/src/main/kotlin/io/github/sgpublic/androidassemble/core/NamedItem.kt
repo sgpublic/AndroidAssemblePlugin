@@ -1,5 +1,6 @@
 package io.github.sgpublic.androidassemble.core
 
+import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
@@ -8,44 +9,40 @@ import org.gradle.api.NamedDomainObjectProvider
  * @author Madray Haven
  * @Date 2023/8/8 14:11
  */
-interface NamedItem {
-    val pubName: String
-}
-
 fun <T> NamedDomainObjectContainer<T>.register(
-    namedItem: NamedItem, block: (T.() -> Unit)? = null
+    namedItem: Named, block: (T.() -> Unit)? = null
 ): NamedDomainObjectProvider<T> {
-    return register(namedItem.pubName) {
+    return register(namedItem.name) {
         block?.invoke(this)
     }
 }
 
 fun <T> NamedDomainObjectContainer<T>.create(
-    namedItem: NamedItem, block: (T.() -> Unit)? = null
+    namedItem: Named, block: (T.() -> Unit)? = null
 ): T {
-    return create(namedItem.pubName) {
+    return create(namedItem.name) {
         block?.invoke(this)
     }
 }
 
 fun <T> NamedDomainObjectContainer<T>.maybeCreate(
-    namedItem: NamedItem
+    namedItem: Named
 ): T {
-    return maybeCreate(namedItem.pubName)
+    return maybeCreate(namedItem.name)
 }
 
 fun <T> NamedDomainObjectCollection<T>.named(
-    namedItem: NamedItem, block: (T.() -> Unit)? = null
+    namedItem: Named, block: (T.() -> Unit)? = null
 ): NamedDomainObjectProvider<T> {
-    return named(namedItem.pubName) {
+    return named(namedItem.name) {
         block?.invoke(this)
     }
 }
 
 fun <S: T, T> NamedDomainObjectCollection<T>.named(
-    namedItem: NamedItem, clazz: Class<S>, block: (S.() -> Unit)? = null
+    namedItem: Named, clazz: Class<S>, block: (S.() -> Unit)? = null
 ): NamedDomainObjectProvider<S> {
-    return named(namedItem.pubName, clazz) {
+    return named(namedItem.name, clazz) {
         block?.invoke(this)
     }
 }
