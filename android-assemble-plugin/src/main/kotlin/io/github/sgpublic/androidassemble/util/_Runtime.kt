@@ -9,9 +9,7 @@ import java.io.InputStream
 
 inline fun <T> withRuntime(command: String, crossinline block: Process.() -> T): T {
     val runtime = Runtime.getRuntime()
-    val result = block.invoke(runtime.exec(command))
-    runtime.exit(0)
-    return result
+    return block.invoke(runtime.exec(command))
 }
 
 inline fun InputStream.useFirstLineIf(crossinline block: (String) -> Boolean): String? {
