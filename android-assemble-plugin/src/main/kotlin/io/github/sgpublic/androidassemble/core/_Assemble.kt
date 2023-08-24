@@ -17,8 +17,6 @@ class ApplyAction internal constructor(project: Project):
     Loggable,
     Project by project {
     internal fun applyAssemble() {
-        clearAssembleOption()
-        clearRenameRules()
         extensions.getByType(AndroidComponentsExtension::class.java).invoke()
     }
 

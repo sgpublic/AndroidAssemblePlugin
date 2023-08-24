@@ -22,7 +22,7 @@ internal open class AssembleOptionImpl(project: Project):
     Project by project {
     override var outputDir: Any = File(
         rootProject.projectDir,
-        "./assemble/${project.name}"
+        "./assemble"
     )
 }
 
@@ -63,11 +63,15 @@ fun com.android.build.api.dsl.BuildType.renameRule(project: Project, block: Base
 }
 
 internal fun Project.renameRule(buildType: String): BaseRenameRule {
-    return renameRules[name]?.get(buildType) ?: rule@{
+    val rule = renameRules[name]?.get(buildType)
+    if (rule != null) {
+        return rule
+    }
+    return rule@{
         return@rule if (buildType == "release") {
-            "${rootProject.name}-${name} V${versionName}(${versionCode})"
+            "./${project.name}/${rootProject.name}-${name} V${versionName}(${versionCode})"
         } else {
-            "${rootProject.name}-${name}_${versionName}_${versionCode}"
+            "./${project.name}/${rootProject.name}-${name}_${versionName}_${versionCode}"
         }
     }
 }
